@@ -4,7 +4,7 @@
 
   Thingy = require("./thingy");
 
-  Thingy.add("test1", function() {
+  Thingy.add("test1", function(magic) {
     return {
       init: function() {
         return console.log("Test 1");
@@ -15,10 +15,20 @@
     };
   });
 
-  Thingy.add("test2", function() {
+  Thingy.add("test2", function(magic) {
     return {
       init: function() {
-        return console.log("Test 2");
+        console.log("Test 2");
+        return this.talk();
+      },
+      talk: function() {
+        return magic.cast({
+          name: "new-message",
+          data: {
+            name: "aewens",
+            text: "he does things"
+          }
+        });
       },
       destroy: function() {
         return console.log("Poof 2");
@@ -26,10 +36,14 @@
     };
   });
 
-  Thingy.add("test3", function() {
+  Thingy.add("test3", function(magic) {
     return {
       init: function() {
-        return console.log("Test 3");
+        console.log("Test 3");
+        return magic.listen("new-message", this.talk);
+      },
+      talk: function(data) {
+        return console.log(data);
       },
       destroy: function() {
         return console.log("Poof 3");

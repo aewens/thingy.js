@@ -1,6 +1,38 @@
 # author: Austin Ewens
-# aka: aewens, @wordsfromae
+# aka: aewens, @aewens_
 # created: 2016-01-23
+
+# (((root, factory) ->
+#     if typeof define is "function" and define.amd
+#         define [], -> (root["Thingy"] = factory())
+#     else if typeof exports is "object"
+#         module.exports = factory()
+#     else
+#         root["Thingy"] = factory()
+# )(@, ->
+    
+Magic = ->
+    spells = {}
+    return {
+        listen: (name, fn) ->
+            spells[name] = spells[name] or []
+            spells[name].push(fn)
+        silence: (name, fn) ->
+            spell = spells[name]
+            if spell
+                for i in [0...spell.length]
+                    if spell[i] is fn
+                        spell.splice(i, 1)
+                        break
+        cast: (runes) ->
+            name = runes.name
+            data = runes.data
+            spell = spells[name]
+            ( spell.forEach (fn) -> fn(data) ) if spell
+    }
+    
+Magic = new Magic()
+
 Thingy = ->
     things = {}
     
@@ -9,9 +41,10 @@ Thingy = ->
             fn: fn
             instance: null
     start: (thingId) ->
-        things[thingId].instance = things[thingId].fn(null) #new Sandbox(this)
-        init = things[thingId].instance.init
-        Promise.resolve(init()) if init
+        thing = things[thingId]
+        thing.instance = new thing.fn(Magic)
+        init = thing.instance.init
+        Promise.resolve(init.call(thing.instance)) if init
     stop: (thingId) ->
         thing = things[thingId]
         if thing.instance
@@ -23,3 +56,5 @@ Thingy = ->
             @[mode](thing) if things.hasOwnProperty(thing)
 
 module.exports = new Thingy()
+# return new Thingy()
+# ))
