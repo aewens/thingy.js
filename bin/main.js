@@ -22,13 +22,15 @@
         return this.talk();
       },
       talk: function() {
-        return magic.cast({
-          name: "new-message",
-          data: {
-            name: "aewens",
-            text: "he does things"
-          }
-        });
+        return setInterval((function() {
+          return magic.cast({
+            name: "new-message",
+            data: {
+              name: "aewens",
+              text: "he does things"
+            }
+          });
+        }), 200);
       },
       destroy: function() {
         return console.log("Poof 2");
@@ -40,10 +42,15 @@
     return {
       init: function() {
         console.log("Test 3");
-        return magic.listen("new-message", this.talk);
+        return magic.listen("new-message", this.talk, this);
       },
       talk: function(data) {
-        return console.log(data);
+        console.log(data.name + ", " + data.text + ".");
+        return this.hush();
+      },
+      hush: function() {
+        magic.silence("new-message", this.talk);
+        return console.log("Control-C to exit");
       },
       destroy: function() {
         return console.log("Poof 3");
