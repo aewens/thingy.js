@@ -11,15 +11,16 @@
         root["Thingy"] = factory()
 )(@, ->
     Magic = ->
-        spells = {}
+        _spells = {}
+        
         return {
             listen: (name, fn, scope) ->
-                spells[name] = spells[name] or []
-                spells[name].push
+                _spells[name] = _spells[name] or []
+                _spells[name].push
                     fn: fn
                     scope: scope
             silence: (name, fn) ->
-                spell = spells[name]
+                spell = _spells[name]
                 if spell
                     for i in [0...spell.length]
                         if spell[i].fn is fn
@@ -28,31 +29,31 @@
             cast: (runes) ->
                 name = runes.name
                 data = runes.data
-                spell = spells[name]
+                spell = _spells[name]
                 ( spell.forEach (obj) -> obj.fn.call(obj.scope, data) ) if spell
         }
     
     Thingy = ->
-        things = {}
+        _things = {}
         
         Magic: new Magic()
         add: (thingId, fn) ->
-            things[thingId] =
+            _things[thingId] =
                 fn: fn
                 instance: null
         start: (thingId) ->
-            thing = things[thingId]
+            thing = _things[thingId]
             thing.instance = new thing.fn(@Magic)
             Promise.resolve(thing.instance.init()) if thing.instance.init
         stop: (thingId) ->
-            thing = things[thingId]
+            thing = _things[thingId]
             if thing.instance
                 thing.instance.destroy()
                 thing.instance = null
         all: (mode) ->
             return null unless mode is "start" or mode is "stop"
-            for thing in things
-                @[mode](thing) if things.hasOwnProperty(thing)
+            for thing in _things
+                @[mode](thing) if _things.hasOwnProperty(thing)
     
     return new Thingy()
 ))
