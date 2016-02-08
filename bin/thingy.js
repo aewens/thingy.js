@@ -13,19 +13,19 @@
   })(this, function() {
     var Magic, Thingy;
     Magic = function() {
-      var spells;
-      spells = {};
+      var _spells;
+      _spells = {};
       return {
         listen: function(name, fn, scope) {
-          spells[name] = spells[name] || [];
-          return spells[name].push({
+          _spells[name] = _spells[name] || [];
+          return _spells[name].push({
             fn: fn,
             scope: scope
           });
         },
         silence: function(name, fn) {
           var i, j, ref, results, spell;
-          spell = spells[name];
+          spell = _spells[name];
           if (spell) {
             results = [];
             for (i = j = 0, ref = spell.length; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
@@ -43,7 +43,7 @@
           var data, name, spell;
           name = runes.name;
           data = runes.data;
-          spell = spells[name];
+          spell = _spells[name];
           if (spell) {
             return spell.forEach(function(obj) {
               return obj.fn.call(obj.scope, data);
@@ -53,19 +53,19 @@
       };
     };
     Thingy = function() {
-      var things;
-      things = {};
+      var _things;
+      _things = {};
       return {
         Magic: new Magic(),
         add: function(thingId, fn) {
-          return things[thingId] = {
+          return _things[thingId] = {
             fn: fn,
             instance: null
           };
         },
         start: function(thingId) {
           var thing;
-          thing = things[thingId];
+          thing = _things[thingId];
           thing.instance = new thing.fn(this.Magic);
           if (thing.instance.init) {
             return Promise.resolve(thing.instance.init());
@@ -73,7 +73,7 @@
         },
         stop: function(thingId) {
           var thing;
-          thing = things[thingId];
+          thing = _things[thingId];
           if (thing.instance) {
             thing.instance.destroy();
             return thing.instance = null;
@@ -85,9 +85,9 @@
             return null;
           }
           results = [];
-          for (j = 0, len = things.length; j < len; j++) {
-            thing = things[j];
-            if (things.hasOwnProperty(thing)) {
+          for (j = 0, len = _things.length; j < len; j++) {
+            thing = _things[j];
+            if (_things.hasOwnProperty(thing)) {
               results.push(this[mode](thing));
             } else {
               results.push(void 0);

@@ -13,25 +13,23 @@
     Magic = ->
         _spells = {}
         
-        return {
-            listen: (name, fn, scope) ->
-                _spells[name] = _spells[name] or []
-                _spells[name].push
-                    fn: fn
-                    scope: scope
-            silence: (name, fn) ->
-                spell = _spells[name]
-                if spell
-                    for i in [0...spell.length]
-                        if spell[i].fn is fn
-                            spell.splice(i, 1)
-                            break
-            cast: (runes) ->
-                name = runes.name
-                data = runes.data
-                spell = _spells[name]
-                ( spell.forEach (obj) -> obj.fn.call(obj.scope, data) ) if spell
-        }
+        listen: (name, fn, scope) ->
+            _spells[name] = _spells[name] or []
+            _spells[name].push
+                fn: fn
+                scope: scope
+        silence: (name, fn) ->
+            spell = _spells[name]
+            if spell
+                for i in [0...spell.length]
+                    if spell[i].fn is fn
+                        spell.splice(i, 1)
+                        break
+        cast: (runes) ->
+            name = runes.name
+            data = runes.data
+            spell = _spells[name]
+            ( spell.forEach (obj) -> obj.fn.call(obj.scope, data) ) if spell
     
     Thingy = ->
         _things = {}
